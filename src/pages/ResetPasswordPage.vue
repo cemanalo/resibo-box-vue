@@ -123,8 +123,8 @@ const handleResetPassword = async () => {
   success.value = null
   
   try {
-    const accessToken = route.query.access_token as string
-    const refreshToken = route.query.refresh_token as string
+    // const accessToken = route.query.access_token as string
+    // const refreshToken = route.query.refresh_token as string
     
     const { error: resetError } = await supabase.auth.updateUser({
       password: form.value.password
