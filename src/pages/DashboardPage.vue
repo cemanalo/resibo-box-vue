@@ -144,19 +144,22 @@
                     <th class="text-left py-3 px-2 font-medium text-slate-400 w-32">Provider</th>
                     <th class="text-left py-3 px-2 font-medium text-slate-400 w-24">Amount</th>
                     <th class="text-left py-3 px-2 font-medium text-slate-400 w-32">Reference</th>
+                    <th class="text-left py-3 px-2 font-medium text-slate-400 w-32">Sender</th>
+                    <th class="text-left py-3 px-2 font-medium text-slate-400 w-32">Delivery Status</th>
+                    <th class="text-left py-3 px-2 font-medium text-slate-400 w-32">Payment Status</th>
                     <th class="text-right py-3 px-2 font-medium text-slate-400 w-24">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-if="paginatedReceipts.length === 0">
-                    <td colspan="5" class="text-center py-8 text-slate-400">
+                    <td colspan="8" class="text-center py-8 text-slate-400">
                       No receipts found. Start by <router-link to="/scan-receipts" class="text-blue-400 hover:text-blue-300">scanning a receipt</router-link>.
                     </td>
                   </tr>
                   <tr v-else v-for="receipt in paginatedReceipts" :key="receipt.id" class="border-b border-slate-800 hover:bg-slate-800/50">
                     <td class="py-3 px-2 text-white w-24">{{ formatDate(receipt.created_at) }}</td>
                     <td class="py-3 px-2 text-white w-32">{{ receipt.provider }}</td>
-                    <td class="py-3 px-2 text-white font-medium w-24">${{ receipt.amount.toFixed(2) }}</td>
+                    <td class="py-3 px-2 text-white font-medium w-24">{{ formatCurrency(receipt.amount) }}</td>
                     <td class="py-3 px-2 w-32">
                       <button
                         @click="copyReference(receipt.reference_number)"
@@ -166,8 +169,35 @@
                         {{ receipt.reference_number }}
                       </button>
                     </td>
+                    <td class="py-3 px-2 text-white w-32">{{ receipt.sender || '-' }}</td>
+                    <td class="py-3 px-2 w-32">
+                      <span
+                        :class="[
+                          'px-2 py-1 text-xs rounded-full',
+                          receipt.delivery_status === 'delivered' ? 'bg-green-600/20 text-green-400' :
+                          receipt.delivery_status === 'pending' ? 'bg-yellow-600/20 text-yellow-400' :
+                          receipt.delivery_status === 'cancelled' ? 'bg-red-600/20 text-red-400' :
+                          'bg-slate-600/20 text-slate-400'
+                        ]"
+                      >
+                        {{ receipt.delivery_status || '-' }}
+                      </span>
+                    </td>
+                    <td class="py-3 px-2 w-32">
+                      <span
+                        :class="[
+                          'px-2 py-1 text-xs rounded-full',
+                          receipt.payment_status === 'paid' ? 'bg-green-600/20 text-green-400' :
+                          receipt.payment_status === 'pending' ? 'bg-yellow-600/20 text-yellow-400' :
+                          receipt.payment_status === 'failed' ? 'bg-red-600/20 text-red-400' :
+                          'bg-slate-600/20 text-slate-400'
+                        ]"
+                      >
+                        {{ receipt.payment_status || '-' }}
+                      </span>
+                    </td>
                     <td class="py-3 px-2 text-right w-24">
-                      <button
+                      <!-- <button
                         @click="viewReceipt(receipt)"
                         class="text-blue-400 hover:text-blue-300 mr-3"
                         title="View Details"
@@ -176,7 +206,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                         </svg>
-                      </button>
+                      </button> -->
                       <button
                         @click="deleteReceipt(receipt.id)"
                         class="text-red-400 hover:text-red-300"
@@ -486,7 +516,7 @@ const exportToCSV = () => {
   }
 
   // Define CSV headers matching the table columns
-  const headers = ['Date Uploaded', 'Provider', 'Amount', 'Reference Number']
+  const headers = ['Date Uploaded', 'Provider', 'Amount', 'Reference Number', 'Sender', 'Delivery Status', 'Payment Status']
   
   // Convert receipts data to CSV format
   const csvContent = [
@@ -495,7 +525,10 @@ const exportToCSV = () => {
       formatDate(receipt.created_at),
       receipt.provider,
       receipt.amount.toFixed(2),
-      receipt.reference_number
+      receipt.reference_number,
+      receipt.sender || '',
+      receipt.delivery_status || '',
+      receipt.payment_status || ''
     ].map(field => `"${field}"`).join(','))
   ].join('\n')
 

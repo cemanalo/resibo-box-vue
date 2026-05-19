@@ -79,15 +79,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 import LoginForm from '../components/auth/LoginForm.vue'
 import RegisterForm from '../components/auth/RegisterForm.vue'
 
 const router = useRouter()
+const route = useRoute()
 const { resetPassword } = useAuth()
 
-const currentView = ref<'login' | 'register'>('login')
+const currentView = ref<'login' | 'register'>(route.query.mode === 'register' ? 'register' : 'login')
 const showForgotPassword = ref(false)
 const resetEmail = ref('')
 const resetError = ref<string | null>(null)

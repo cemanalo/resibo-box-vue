@@ -9,6 +9,8 @@ export interface Receipt {
   amount: number
   sender: string
   raw_text: string
+  delivery_status: string
+  payment_status: string
   created_at: string
 }
 

@@ -74,7 +74,7 @@
             <p class="text-slate-400">Say goodbye to messy receipts and hello to organized records.</p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
               <router-link
-                to="/auth"
+                to="/auth?mode=register"
                 class="inline-flex items-center px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors"
               >
                 Sign Up Free
